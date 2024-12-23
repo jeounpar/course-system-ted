@@ -2,7 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DatabaseConfig } from './config.database';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { TestEntity } from '../entity/test.entity';
+import { CourseEntity, CourseRegistrationEntity, UserEntity } from '../entity';
 
 export async function dataSourceFactory(
   options: DataSourceOptions,
@@ -16,8 +16,8 @@ async function inspectConnection(datasource: DataSource) {
   await datasource.query('SELECT 1');
 }
 
-function getAllTypeOrmModels() {
-  return [TestEntity];
+function getAllEntities() {
+  return [CourseEntity, CourseRegistrationEntity, UserEntity];
 }
 
 export function dataSourceOptionsFactory(
@@ -37,7 +37,7 @@ export function dataSourceOptionsFactory(
     password,
     database,
     poolSize,
-    entities: getAllTypeOrmModels(),
+    entities: getAllEntities(),
     namingStrategy: new SnakeNamingStrategy(),
     synchronize: false,
     logging: false,
