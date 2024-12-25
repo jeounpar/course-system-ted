@@ -24,6 +24,16 @@ export class CourseEntity {
   userId: number;
 
   @Column({
+    type: 'int',
+  })
+  totalCount: number;
+
+  @Column({
+    type: 'int',
+  })
+  currentCount: number;
+
+  @Column({
     type: 'varchar',
     comment: '특강 제목',
   })

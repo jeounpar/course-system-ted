@@ -27,13 +27,11 @@ export class UserEntity {
   @Column({
     type: 'enum',
     enum: UserTypeEnum,
-    nullable: false,
   })
   type: UserType;
 
   @Column({
     type: 'varchar',
-    nullable: false,
     comment: '유저 이름',
   })
   name: string;
@@ -45,13 +43,11 @@ export class UserEntity {
 
   @UpdateDateColumn({
     type: 'timestamp',
-    nullable: true,
   })
   updateDate: Nullable<Date>;
 
   @DeleteDateColumn({
     type: 'timestamp',
-    nullable: true,
   })
   deleteDate: Nullable<Date>;
 
