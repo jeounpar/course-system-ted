@@ -40,4 +40,8 @@ export class CourseDomain {
 
     return domain;
   }
+
+  public increaseCurrentCount() {
+    this.currentCount += 1;
+  }
 }

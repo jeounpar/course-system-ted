@@ -2,6 +2,7 @@ import { Nullable } from '../util';
 import { CourseRegistrationEntity } from '../entity';
 import { CourseDomain } from '../course/course.domain';
 import { UserDomain } from '../user/user.domain';
+import { CannotRegisterCourse } from '../error';
 
 export class CourseRegistrationDomain {
   id: number;
@@ -32,5 +33,20 @@ export class CourseRegistrationDomain {
       : null;
 
     return domain;
+  }
+
+  public register({ userId }: { userId: number }) {
+    if (this.isAlreadyRegistered())
+      throw new CannotRegisterCourse('is already registered');
+
+    this.userId = userId;
+  }
+
+  public isNotRegistered() {
+    return this.userId === null;
+  }
+
+  public isAlreadyRegistered() {
+    return !this.isNotRegistered();
   }
 }
