@@ -1,7 +1,7 @@
-import { Nullable } from '../util';
-import { UserEntity, UserType } from '../entity';
-import { CourseDomain } from '../course/course.domain';
-import { CourseRegistrationDomain } from '../registration/course-registration.domain';
+import { Nullable } from '../../util';
+import { UserEntity, UserType } from '../../entity';
+import { CourseDomain } from '../../course/domain/course.domain';
+import { CourseRegistrationDomain } from '../../course/domain/course-registration.domain';
 
 export class UserDomain {
   id: number;

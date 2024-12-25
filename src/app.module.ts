@@ -8,6 +8,8 @@ import {
   dataSourceFactory,
   dataSourceOptionsFactory,
 } from './config/typeorm-factory';
+import { UserModule } from './user/user.module';
+import { CourseModule } from './course/course.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import {
       useFactory: dataSourceOptionsFactory,
       dataSourceFactory: dataSourceFactory,
     }),
+    UserModule,
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

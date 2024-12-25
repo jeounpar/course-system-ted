@@ -1,6 +1,6 @@
 import { CourseRegistrationDomain } from './course-registration.domain';
-import { CourseRegistrationEntity } from '../entity';
-import { CannotRegisterCourse } from '../error';
+import { CourseRegistrationEntity } from '../../entity';
+import { CannotRegisterCourse } from '../../error';
 
 describe('CourseRegistrationDomain', () => {
   let courseRegistration: CourseRegistrationDomain;

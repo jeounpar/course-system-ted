@@ -1,5 +1,5 @@
 import { CourseDomain } from './course.domain';
-import { CourseEntity } from '../entity';
+import { CourseEntity } from '../../entity';
 
 describe('CourseDomain', () => {
   let course: CourseDomain;

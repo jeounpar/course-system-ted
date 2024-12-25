@@ -1,8 +1,8 @@
-import { Nullable } from '../util';
-import { CourseRegistrationEntity } from '../entity';
-import { CourseDomain } from '../course/course.domain';
-import { UserDomain } from '../user/user.domain';
-import { CannotRegisterCourse } from '../error';
+import { Nullable } from '../../util';
+import { CourseRegistrationEntity } from '../../entity';
+import { CourseDomain } from './course.domain';
+import { UserDomain } from '../../user/domain/user.domain';
+import { CannotRegisterCourse } from '../../error';
 
 export class CourseRegistrationDomain {
   id: number;
@@ -13,8 +13,6 @@ export class CourseRegistrationDomain {
 
   user: Nullable<UserDomain>;
   course: Nullable<CourseDomain>;
-
-  private constructor() {}
 
   public static fromEntity(
     entity: CourseRegistrationEntity,
@@ -33,6 +31,18 @@ export class CourseRegistrationDomain {
       : null;
 
     return domain;
+  }
+
+  public toEntity() {
+    const entity = new CourseRegistrationEntity();
+
+    entity.id = this.id;
+    entity.userId = this.userId;
+    entity.courseId = this.courseId;
+    entity.createDate = this.createDate;
+    entity.updateDate = this.updateDate;
+
+    return entity;
   }
 
   public register({ userId }: { userId: number }) {
