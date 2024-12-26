@@ -137,6 +137,43 @@ describe('CourseService', () => {
     ).toEqual(특강신청에_성공한_유저아이디_배열.sort());
   });
 
+
+  it('같은 사용자가 동일한 특강에 5번 신청하면 한번만 성공한다.', async () => {
+    const userId = 유저_배열_40명[0].id;
+    const courseId = 특강.id;
+
+    const 특강신청에_성공한_유저아이디_배열: number[] = [];
+
+    await Promise.allSettled(
+      Array(5)
+        .fill(null)
+        .map(() =>
+          dataSource.transaction(async (entityManager) => {
+            const success = await courseService.register({
+              userId,
+              courseId,
+              entityManager,
+            });
+            특강신청에_성공한_유저아이디_배열.push(success.userId);
+          }),
+        ),
+    );
+
+    const 데이터베이스에_저장된_특강신청_목록 = await dataSource
+      .getRepository(CourseRegistrationEntity)
+      .find({ where: { courseId } });
+
+    const 데이터베이스에_저장된_수강신청_유저아이디_배열 =
+      데이터베이스에_저장된_특강신청_목록
+        .filter((e) => e.userId !== null)
+        .map((e) => e.userId);
+
+    expect(특강신청에_성공한_유저아이디_배열.length).toEqual(1);
+    expect(데이터베이스에_저장된_수강신청_유저아이디_배열.length).toEqual(1);
+    expect(데이터베이스에_저장된_수강신청_유저아이디_배열.sort()).toEqual(
+      특강신청에_성공한_유저아이디_배열.sort(),
+    );
+
   it('특정 날짜에 특강 신청이 가능한 특강을 조회한다.', async () => {
     const userRepository = dataSource.getRepository(UserEntity);
     const courseRepository = dataSource.getRepository(CourseEntity);
@@ -269,5 +306,6 @@ describe('CourseService', () => {
         .map((e) => e.instructorName)
         .sort(),
     ).toEqual(['COACH_01', 'COACH_02']);
+
   });
 });

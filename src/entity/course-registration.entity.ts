@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { Nullable } from '../util';
@@ -12,6 +13,7 @@ import { UserEntity } from './user.entity';
 import { CourseEntity } from './course.entity';
 
 @Entity('course_registration')
+@Unique('unique_course_user', ['courseId', 'userId'])
 export class CourseRegistrationEntity {
   @PrimaryGeneratedColumn()
   id: number;
