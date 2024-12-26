@@ -51,4 +51,39 @@ export class CourseDomain {
 
     return entity;
   }
+
+  public isAvailable() {
+    const totalCount = this.courseRegistrations.length;
+    const currentCount = this.courseRegistrations.filter((e) =>
+      e.isAlreadyRegistered(),
+    ).length;
+
+    return currentCount !== totalCount;
+  }
+
+  public toResponse() {
+    const registered = this.courseRegistrations.filter((e) =>
+      e.isAlreadyRegistered(),
+    );
+
+    return {
+      courseId: this.id,
+      title: this.title,
+      description: this.description,
+      totalCount: this.courseRegistrations.length,
+      currentCount: registered.length,
+      remainCount: this.courseRegistrations.length - registered.length,
+      createDate: this.createDate,
+    };
+  }
+
+  public toHistory() {
+    return {
+      courseId: this.id,
+      title: this.title,
+      description: this.description,
+      instructorName: this.user.name,
+      createDate: this.createDate,
+    };
+  }
 }

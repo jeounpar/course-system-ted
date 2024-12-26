@@ -59,4 +59,11 @@ export class CourseRegistrationDomain {
   public isAlreadyRegistered() {
     return !this.isNotRegistered();
   }
+
+  public toHistory() {
+    return {
+      ...this.course.toHistory(),
+      registerDate: this.updateDate,
+    };
+  }
 }

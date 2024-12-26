@@ -136,4 +136,138 @@ describe('CourseService', () => {
       데이터베이스에_저장된_특강신청_목록.map((e) => e.userId).sort(),
     ).toEqual(특강신청에_성공한_유저아이디_배열.sort());
   });
+
+  it('특정 날짜에 특강 신청이 가능한 특강을 조회한다.', async () => {
+    const userRepository = dataSource.getRepository(UserEntity);
+    const courseRepository = dataSource.getRepository(CourseEntity);
+    const courseRegistrationRepository = dataSource.getRepository(
+      CourseRegistrationEntity,
+    );
+
+    const COACH_02 = await userRepository.save({
+      name: 'COACH_02',
+      type: 'COACH',
+    });
+    const COACH_03 = await userRepository.save({
+      name: 'COACH_03',
+      type: 'COACH',
+    });
+
+    const COURSE_02 = await courseRepository.save({
+      userId: COACH_02.id,
+      title: 'TEST_COURSE_TITLE_02',
+      description: 'TEST_COURSE_DESCRIPTION_02',
+      courseTime: '2024-12-25',
+    });
+    const COURSE_03 = await courseRepository.save({
+      userId: COACH_03.id,
+      title: 'TEST_COURSE_TITLE_03',
+      description: 'TEST_COURSE_DESCRIPTION_03',
+      courseTime: '2024-12-25',
+    });
+
+    await courseRegistrationRepository.save([
+      ...Array.from({ length: 30 }, () => {
+        const courseRegistration = new CourseRegistrationEntity();
+        courseRegistration.courseId = COURSE_02.id;
+
+        return courseRegistration;
+      }),
+      ...Array.from({ length: 30 }, () => {
+        const courseRegistration = new CourseRegistrationEntity();
+        courseRegistration.courseId = COURSE_03.id;
+
+        return courseRegistration;
+      }),
+    ]);
+
+    const 잘못된_날짜로_조회 = await courseService.findAvailable({
+      courseTime: '2024-12-24',
+    });
+
+    const 올바른_날짜로_조회 = await courseService.findAvailable({
+      courseTime: '2024-12-25',
+    });
+
+    expect(잘못된_날짜로_조회.length).toEqual(0);
+
+    expect(올바른_날짜로_조회.length).toEqual(3);
+    expect(
+      올바른_날짜로_조회.map((e) => e.toResponse()).map((e) => e.totalCount),
+    ).toEqual([30, 30, 30]);
+    expect(
+      올바른_날짜로_조회.map((e) => e.toResponse()).map((e) => e.currentCount),
+    ).toEqual([0, 0, 0]);
+  });
+
+  it('특강 신청 히스토리를 조회한다.', async () => {
+    const userRepository = dataSource.getRepository(UserEntity);
+    const courseRepository = dataSource.getRepository(CourseEntity);
+    const courseRegistrationRepository = dataSource.getRepository(
+      CourseRegistrationEntity,
+    );
+
+    const COACH_02 = await userRepository.save({
+      name: 'COACH_02',
+      type: 'COACH',
+    });
+    const COURSE_02 = await courseRepository.save({
+      userId: COACH_02.id,
+      title: 'TEST_COURSE_TITLE_02',
+      description: 'TEST_COURSE_DESCRIPTION_02',
+      courseTime: '2024-12-25',
+    });
+    await courseRegistrationRepository.save([
+      ...Array.from({ length: 30 }, () => {
+        const courseRegistration = new CourseRegistrationEntity();
+        courseRegistration.courseId = COURSE_02.id;
+
+        return courseRegistration;
+      }),
+    ]);
+
+    const userId = 유저_배열_40명.map((e) => e.id)[0];
+
+    const COURSE_01_ID = 특강.id;
+    const COURSE_02_ID = COURSE_02.id;
+
+    await Promise.all([
+      dataSource.transaction(async (entityManager) => {
+        await courseService.register({
+          userId,
+          courseId: COURSE_01_ID,
+          entityManager,
+        });
+      }),
+      dataSource.transaction(async (entityManager) => {
+        await courseService.register({
+          userId,
+          courseId: COURSE_02_ID,
+          entityManager,
+        });
+      }),
+    ]);
+
+    const history = await courseService.findHistory({ userId });
+
+    expect(history.length).toEqual(2);
+    expect(
+      history
+        .map((e) => e.toHistory())
+        .map((e) => e.courseId)
+        .sort(),
+    ).toEqual([COURSE_01_ID, COURSE_02_ID]);
+    expect(
+      history
+        .map((e) => e.toHistory())
+        .map((e) => e.description)
+        .sort(),
+    ).toEqual(['TEST_COURSE_DESCRIPTION', 'TEST_COURSE_DESCRIPTION_02']);
+    expect(
+      history
+        .map((e) => e.toHistory())
+        .map((e) => e.instructorName)
+        .sort(),
+    ).toEqual(['COACH_01', 'COACH_02']);
+  });
 });
