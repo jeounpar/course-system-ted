@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CourseRegistrationEntity } from '../../entity';
-import { EntityManager, Repository } from 'typeorm';
-import { CourseRegistrationDomain } from '../domain/course-registration.domain';
+import { EntityManager, IsNull, Repository } from 'typeorm';
+import { CourseRegistrationDomain } from '../domain';
 import { Nullable } from '../../util';
+import { isNil } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class CourseRegistrationRepository {
@@ -18,18 +19,47 @@ export class CourseRegistrationRepository {
       : this._repository;
   }
 
-  public async save({ domain }: { domain: CourseRegistrationDomain[] }) {
-    await this._repository.save(domain.map((e) => e.toEntity()));
+  public async save({
+    domain,
+    entityManager,
+  }: {
+    domain: CourseRegistrationDomain;
+    entityManager?: EntityManager;
+  }) {
+    const repo = this._getRepository(entityManager);
+
+    const saved = await repo.save(domain.toEntity());
+
+    return CourseRegistrationDomain.fromEntity(saved);
   }
 
-  public findOneBy(entityManager?: EntityManager) {
+  public async bulkSave({
+    domain,
+    entityManager,
+  }: {
+    domain: CourseRegistrationDomain[];
+    entityManager?: EntityManager;
+  }) {
+    const repo = this._getRepository(entityManager);
+
+    const saved = await repo.save(domain.map((e) => e.toEntity()));
+
+    return saved.map(CourseRegistrationDomain.fromEntity);
+  }
+
+  public findOne(entityManager?: EntityManager) {
     const repo = this._getRepository(entityManager);
     return {
-      courseIdWithLock: async (
-        courseId: number,
-      ): Promise<Nullable<CourseRegistrationDomain>> => {
+      emptyWithLock: async ({
+        courseId,
+      }: {
+        courseId: number;
+      }): Promise<Nullable<CourseRegistrationDomain>> => {
+        if (isNil(entityManager))
+          throw new Error('entityManager must be needed');
+
         const entity = await repo.findOne({
-          where: { courseId },
+          where: { courseId, userId: IsNull() },
           lock: {
             mode: 'pessimistic_write',
           },
@@ -38,11 +68,13 @@ export class CourseRegistrationRepository {
 
         return entity ? CourseRegistrationDomain.fromEntity(entity) : null;
       },
-      courseId: async (
-        courseId: number,
-      ): Promise<Nullable<CourseRegistrationDomain>> => {
+      empty: async ({
+        courseId,
+      }: {
+        courseId: number;
+      }): Promise<Nullable<CourseRegistrationDomain>> => {
         const entity = await repo.findOne({
-          where: { courseId },
+          where: { courseId, userId: IsNull() },
           order: { id: 'ASC' },
         });
 

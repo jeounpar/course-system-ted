@@ -1,13 +1,11 @@
 import { CourseEntity } from '../../entity';
 import { Nullable } from '../../util';
-import { UserDomain } from '../../user/domain/user.domain';
+import { UserDomain } from '../../user/domain';
 import { CourseRegistrationDomain } from './course-registration.domain';
 
 export class CourseDomain {
   id: number;
   userId: number;
-  totalCount: number;
-  currentCount: number;
   title: string;
   description: Nullable<string>;
   courseTime: string;
@@ -24,8 +22,6 @@ export class CourseDomain {
 
     domain.id = entity.id;
     domain.userId = entity.userId;
-    domain.totalCount = entity.totalCount;
-    domain.currentCount = entity.currentCount;
     domain.updateDate = entity.updateDate;
     domain.title = entity.title;
     domain.description = entity.description;
@@ -41,7 +37,18 @@ export class CourseDomain {
     return domain;
   }
 
-  public increaseCurrentCount() {
-    this.currentCount += 1;
+  public toEntity() {
+    const entity = new CourseEntity();
+
+    entity.id = this.id;
+    entity.userId = this.userId;
+    entity.updateDate = this.updateDate;
+    entity.title = this.title;
+    entity.description = this.description;
+    entity.courseTime = this.courseTime;
+    entity.createDate = this.createDate;
+    entity.updateDate = this.updateDate;
+
+    return entity;
   }
 }

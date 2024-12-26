@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from './config/config.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DatabaseConfig } from './config/config.database';
 import {
+  ConfigModule,
   dataSourceFactory,
   dataSourceOptionsFactory,
-} from './config/typeorm-factory';
+} from './config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseConfig } from './config/config.database';
 import { UserModule } from './user/user.module';
 import { CourseModule } from './course/course.module';
 

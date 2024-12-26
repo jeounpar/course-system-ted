@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { CourseRegistrationRepository } from './course-registration.repository';
-import { CourseRegistrationDomain } from '../domain/course-registration.domain';
+import { CourseRegistrationDomain } from '../domain';
 import { MySqlContainer, StartedMySqlContainer } from '@testcontainers/mysql';
-import { getAllEntities } from '../../config/typeorm-factory';
+import { getAllEntities } from '../../config';
 
 describe('CourseRegistrationRepository', () => {
   jest.setTimeout(30000);
@@ -59,9 +59,9 @@ describe('CourseRegistrationRepository', () => {
     const courseRegistration = new CourseRegistrationDomain();
     courseRegistration.courseId = 1;
 
-    await repository.save({ domain: [courseRegistration] });
+    await repository.save({ domain: courseRegistration });
 
-    const withoutLock = await repository.findOneBy().courseId(1);
+    const withoutLock = await repository.findOne().empty({ courseId: 1 });
 
     expect(withoutLock).not.toBeNull();
     expect(withoutLock.courseId).toEqual(1);
@@ -71,12 +71,12 @@ describe('CourseRegistrationRepository', () => {
     const domain = new CourseRegistrationDomain();
     domain.courseId = 1;
 
-    await repository.save({ domain: [domain] });
+    await repository.save({ domain });
 
     await dataSource.transaction(async (entityManager) => {
       const saved = await repository
-        .findOneBy(entityManager)
-        .courseIdWithLock(1);
+        .findOne(entityManager)
+        .emptyWithLock({ courseId: 1 });
 
       expect(saved).not.toBeNull();
       expect(saved.courseId).toEqual(1);

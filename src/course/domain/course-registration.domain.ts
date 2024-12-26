@@ -1,7 +1,7 @@
 import { Nullable } from '../../util';
 import { CourseRegistrationEntity } from '../../entity';
 import { CourseDomain } from './course.domain';
-import { UserDomain } from '../../user/domain/user.domain';
+import { UserDomain } from '../../user/domain';
 import { CannotRegisterCourse } from '../../error';
 
 export class CourseRegistrationDomain {

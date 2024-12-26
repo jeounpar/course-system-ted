@@ -3,3 +3,9 @@ export class CannotRegisterCourse extends Error {
     super(message);
   }
 }
+
+export class NotFoundError extends Error {
+  public constructor(message: string) {
+    super(message);
+  }
+}
