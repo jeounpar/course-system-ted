@@ -1,5 +1,5 @@
 ## ERD
-![erd.png](erd.png)
+![erd.png](src/erd.png)
 
 ```
 user
