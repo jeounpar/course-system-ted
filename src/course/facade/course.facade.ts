@@ -1,17 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CourseService } from '../service';
 import { UserService } from '../../user/service';
-import { UserEntity } from '../../entity';
 import { getDataSource } from '../../config';
 
 @Injectable()
 export class CourseFacade {
   constructor(
     @Inject(CourseService) private readonly _courseService: CourseService,
-    @Inject(UserEntity) private readonly _userService: UserService,
+    @Inject(UserService) private readonly _userService: UserService,
   ) {}
 
-  public async register({
+  public async registerCourse({
     userId,
     courseId,
   }: {
@@ -27,5 +26,17 @@ export class CourseFacade {
         entityManager,
       });
     });
+  }
+
+  public async findAvailableCourse({ courseTime }: { courseTime: string }) {
+    const course = await this._courseService.findAvailable({ courseTime });
+
+    return course.map((e) => e.toResponse());
+  }
+
+  public async findRegistrationHistory({ userId }: { userId: number }) {
+    const history = await this._courseService.findHistory({ userId });
+
+    return history.map((e) => e.toHistory());
   }
 }

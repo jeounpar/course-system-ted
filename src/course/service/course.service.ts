@@ -36,4 +36,20 @@ export class CourseService {
 
     return saved;
   }
+
+  public async findAvailable({ courseTime }: { courseTime: string }) {
+    const course = await this._courseRepository
+      .findMany()
+      .courseTime({ courseTime });
+
+    return course.filter((e) => e.isAvailable());
+  }
+
+  public async findHistory({ userId }: { userId: number }) {
+    const courseRegistration = await this._courseRegistrationRepository
+      .findMany()
+      .historyByUserId({ userId });
+
+    return courseRegistration;
+  }
 }

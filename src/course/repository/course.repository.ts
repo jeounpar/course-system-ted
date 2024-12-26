@@ -29,6 +29,21 @@ export class CourseRepository {
     };
   }
 
+  public findMany(entityManager?: EntityManager) {
+    const repo = this._getRepository(entityManager);
+
+    return {
+      courseTime: async ({ courseTime }: { courseTime: string }) => {
+        const entity = await repo.find({
+          where: { courseTime },
+          relations: ['courseRegistrations'],
+        });
+
+        return entity.length !== 0 ? entity.map(CourseDomain.fromEntity) : [];
+      },
+    };
+  }
+
   public async save({
     domain,
     entityManager,

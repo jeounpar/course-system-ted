@@ -82,4 +82,21 @@ export class CourseRegistrationRepository {
       },
     };
   }
+
+  public findMany(entityManager?: EntityManager) {
+    const repo = this._getRepository(entityManager);
+
+    return {
+      historyByUserId: async ({ userId }: { userId: number }) => {
+        const history = await repo.find({
+          where: { userId },
+          relations: ['user', 'course', 'course.user'],
+        });
+
+        return history.length !== 0
+          ? history.map(CourseRegistrationDomain.fromEntity)
+          : [];
+      },
+    };
+  }
 }
