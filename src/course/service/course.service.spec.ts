@@ -137,7 +137,6 @@ describe('CourseService', () => {
     ).toEqual(특강신청에_성공한_유저아이디_배열.sort());
   });
 
-
   it('같은 사용자가 동일한 특강에 5번 신청하면 한번만 성공한다.', async () => {
     const userId = 유저_배열_40명[0].id;
     const courseId = 특강.id;
@@ -173,6 +172,7 @@ describe('CourseService', () => {
     expect(데이터베이스에_저장된_수강신청_유저아이디_배열.sort()).toEqual(
       특강신청에_성공한_유저아이디_배열.sort(),
     );
+  });
 
   it('특정 날짜에 특강 신청이 가능한 특강을 조회한다.', async () => {
     const userRepository = dataSource.getRepository(UserEntity);
@@ -306,6 +306,5 @@ describe('CourseService', () => {
         .map((e) => e.instructorName)
         .sort(),
     ).toEqual(['COACH_01', 'COACH_02']);
-
   });
 });
