@@ -14,7 +14,7 @@ import { CourseEntity } from './course.entity';
 export enum UserTypeEnum {
   MANAGER = 'MANAGER',
   COACH = 'COACH',
-  STUDENT = ' STUDENT',
+  STUDENT = 'STUDENT',
 }
 
 export type UserType = keyof typeof UserTypeEnum;

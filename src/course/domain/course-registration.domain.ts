@@ -1,7 +1,7 @@
 import { Nullable } from '../../util';
 import { CourseRegistrationEntity } from '../../entity';
 import { CourseDomain } from './course.domain';
-import { UserDomain } from '../../user/domain/user.domain';
+import { UserDomain } from '../../user/domain';
 import { CannotRegisterCourse } from '../../error';
 
 export class CourseRegistrationDomain {
@@ -58,5 +58,12 @@ export class CourseRegistrationDomain {
 
   public isAlreadyRegistered() {
     return !this.isNotRegistered();
+  }
+
+  public toHistory() {
+    return {
+      ...this.course.toHistory(),
+      registerDate: this.updateDate,
+    };
   }
 }

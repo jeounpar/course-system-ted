@@ -24,16 +24,6 @@ export class CourseEntity {
   userId: number;
 
   @Column({
-    type: 'int',
-  })
-  totalCount: number;
-
-  @Column({
-    type: 'int',
-  })
-  currentCount: number;
-
-  @Column({
     type: 'varchar',
     comment: '특강 제목',
   })
@@ -47,7 +37,7 @@ export class CourseEntity {
   description: Nullable<string>;
 
   @Column({
-    type: 'time',
+    type: 'date',
     comment: '특강 날짜 ex) 2024-12-25',
   })
   courseTime: string;
